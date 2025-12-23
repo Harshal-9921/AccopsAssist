@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accops AI Assistant</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --knowledge-base-orange: #ff6e42;
+            /* Accops Blue */
+            --bg-color: #ffffff;
+            --chat-bg: #f3f4f6;
+            --user-msg-bg: #ff6e42;
+            --ai-msg-bg: #e5e7eb;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+
+        /* 1. Launcher Button (Floating) */
+        .chat-launcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--knowledge-base-orange);
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .chat-launcher:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-launcher svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+
+        /* 2. Chat Window Container */
+        .chat-window {
+            position: fixed;
+            bottom: 20px;
+            right: 90px;  /* 👈 Move chat to the LEFT of icon */
+            width: 350px;
+            height: 500px;
+            background: var(--bg-color);
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            pointer-events: none;
+            /* Hidden by default */
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+        }
+
+        /* State: Open */
+        .chat-window.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+
+        /* Header */
+        .chat-header {
+            background: var(--knowledge-base-orange);
+            color: white;
+            padding: 16px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* Messages Area */
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background: var(--chat-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Message Bubbles */
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+            position: relative;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: var(--user-msg-bg);
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background: var(--ai-msg-bg);
+            color: #1f2937;
+            border-bottom-left-radius: 2px;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            /* Hidden by default */
+            align-self: flex-start;
+            background: var(--ai-msg-bg);
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .typing-dot {
+            height: 6px;
+            width: 6px;
+            background-color: #6b7280;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        /* Input Area */
+        .chat-input-area {
+            padding: 12px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            border-color: var(--knowledge-base-orange);
+        }
+
+        .send-btn {
+            background: var(--knowledge-base-orange);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover {
+            background: #ff6e42;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="chat-launcher" onclick="toggleChat()">
+        <svg viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
+        </svg>
+    </div>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <span>AccopAssist</span>
+            <span class="close-btn" onclick="toggleChat()">×</span>
+        </div>
+
+        <div class="chat-messages" id="messagesList">
+            <div class="message ai">Hello! I'm your friendly Accops documentation assistant. How can I help you today?</div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="userInput" class="chat-input" placeholder="Type a question..."
+                onkeypress="handleEnter(event)" />
+            <button class="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let isOpen = false;
+
+        function toggleChat() {
+            const window = document.getElementById("chatWindow");
+            isOpen = !isOpen;
+            if (isOpen) window.classList.add("open");
+            else window.classList.remove("open");
+        }
+
+        function handleEnter(e) {
+            if (e.key === "Enter") sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const messagesList = document.getElementById("messagesList");
+            const typingIndicator = document.getElementById("typingIndicator");
+            const question = input.value.trim();
+
+            if (!question) return;
+
+            // 1. Add User Message
+            addMessage(question, "user");
+            input.value = ""; // Clear input
+
+            // 2. Show Typing Indicator
+            typingIndicator.style.display = "block";
+            messagesList.scrollTop = messagesList.scrollHeight; // Scroll to bottom
+
+            try {
+                // 3. Call Backend API (Matches your Guide Step 2)
+                const res = await fetch("http://localhost:8000/ask", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question: question })
+                });
+
+                const data = await res.json();
+
+                // 4. Hide Typing Indicator & Add AI Response
+                typingIndicator.style.display = "none";
+
+                // Use 'marked.parse' if available, otherwise raw text
+                const formattedAnswer = typeof marked !== 'undefined' ? marked.parse(data.answer) : data.answer;
+                addMessage(formattedAnswer, "ai", true); // true = allow HTML (for bold/lists)
+
+            } catch (error) {
+                typingIndicator.style.display = "none";
+                addMessage("Error connecting to server. Is FastAPI running?", "ai");
+                console.error(error);
+            }
+        }
+
+        function addMessage(text, sender, isHTML = false) {
+            const messagesList = document.getElementById("messagesList");
+            const typingIndicator = document.getElementById("typingIndicator");
+
+            const div = document.createElement("div");
+            div.className = `message ${sender}`;
+
+            if (isHTML) div.innerHTML = text; // Be careful with XSS in production!
+            else div.textContent = text;
+
+            // Insert before the typing indicator so typing stays at bottom
+            messagesList.insertBefore(div, typingIndicator);
+            messagesList.scrollTop = messagesList.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>
