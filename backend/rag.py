@@ -2,7 +2,9 @@ import os
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_openai import ChatOpenAI
-from product_definitions import PRODUCT_DEFINITIONS
+from backend.product_definitions import PRODUCT_DEFINITIONS
+
+
 
 
 
