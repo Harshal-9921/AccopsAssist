@@ -316,7 +316,7 @@
                         <th>Date & Time</th>
                         <th>User Query</th>
                         <th>Product</th>
-                        <th>Doc Confidence</th>
+                        <th>IP Address</th>
                         <th>👍👎</th>
                     </tr>
                 </thead>
@@ -383,29 +383,29 @@
                 document.getElementById("stat-hysecure").innerText =
                     summary.by_product?.HySecure || 0;
 
-                // 2️⃣ Fetch top questions
-                const topRes = await fetch(`${API_BASE}/admin/top-questions`, {
+                // 2️⃣ Fetch recent logs (latest entries from CSV)
+                const logsRes = await fetch(`${API_BASE}/admin/recent-logs`, {
                     headers: {
                         "Authorization": `Bearer ${ADMIN_TOKEN}`
                     }
                 });
 
-                const topData = await topRes.json();
+                const logsData = await logsRes.json();
 
-                // Populate table
+                // Populate table with recent rows
                 const tbody = document.getElementById("logs-body");
                 tbody.innerHTML = "";
 
-                topData.top_questions.forEach(item => {
+                logsData.recent_logs.forEach(item => {
                     const badgeClass =
                         item.product === "HyWorks" ? "badge-hyworks" : "badge-hysecure";
 
                     tbody.innerHTML += `
         <tr>
-          <td>-</td>
+          <td>${item.datetime}</td>
           <td>${item.question}</td>
           <td><span class="badge ${badgeClass}">${item.product}</span></td>
-          <td>${item.count}</td>
+          <td>${item.ip || '-'}</td>
           <td>👍 👎</td>
         </tr>
       `;

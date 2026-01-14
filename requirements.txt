@@ -1,0 +1,12 @@
+fastapi>=0.95.0
+uvicorn[standard]>=0.22.0
+requests>=2.31.0
+beautifulsoup4>=4.12.2
+langchain>=0.0.300
+openai>=0.27.0
+sentence-transformers>=2.2.2
+transformers>=4.35.2
+huggingface-hub>=0.16.4
+faiss-cpu>=1.7.4   # optional; use faiss-cpu or faiss-cpu-binary per platform
+python-dotenv>=1.0.0
+typing-extensions>=4.8.0

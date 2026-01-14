@@ -1,11 +1,29 @@
-timestamp,question,product,ip_address
+Date and Time,User Query,Product,IP Address
 2025-12-31 13:31:18,what is Hyworks?,HyWorks,127.0.0.1
-2025-12-31 13:31:48,what is HyWorks?,HyWorks,127.0.0.1
-2025-12-31 13:33:14,what is HyWorks?,HyWorks,127.0.0.1
-2025-12-31 13:34:54,what is HyWorks?,HyWorks,127.0.0.1
 2025-12-31 22:22:51,what is HyWorks,HyWorks,127.0.0.1
 2025-12-31 22:26:36,What are Accops products?,HySecure,127.0.0.1
 2025-12-31 22:26:55,What are the port requirements for HyWorks?,HyWorks,127.0.0.1
 2025-12-31 22:27:49,What are the port requirements for HyWorks?,HyWorks,127.0.0.1
 2025-12-31 22:28:11,How to configure Web VPN in HySecure?,HySecure,127.0.0.1
 2026-01-01 13:38:24,how CSV Download works,HySecure,127.0.0.1
+2026-01-10 14:38:11,What is HySecure?,HySecure,127.0.0.1
+2026-01-11 22:21:34,Integration with Active Directory steps,HySecure,127.0.0.1
+2026-01-12 15:11:44,What ports are required for HyWorks?,HyWorks,127.0.0.1
+2026-01-12 15:12:48,what is HyWorks,HyWorks,127.0.0.1
+2026-01-13 11:10:46,how Hyper-V connector is installed on Microsoft Hyper-V,HySecure,127.0.0.1
+2026-01-13 16:07:28,installing Hysecure in single node?,HySecure,127.0.0.1
+2026-01-13 16:10:48,this is not the currect answer,HySecure,127.0.0.1
+2026-01-13 16:11:23,i am looking for HySecure,HySecure,127.0.0.1
+2026-01-13 18:38:30,what is HySecure,HySecure,127.0.0.1
+2026-01-13 18:46:17,what is HyWorks?,HyWorks,127.0.0.1
+2026-01-13 18:47:48,what is HyWorks?,HyWorks,127.0.0.1
+2026-01-13 18:51:57,Integration with Active Directory steps,HySecure,127.0.0.1
+2026-01-14 10:17:41,what is HySecure,HySecure,127.0.0.1
+2026-01-14 10:20:53,what is HyWorks,HyWorks,127.0.0.1
+2026-01-14 10:31:36,Integration with Active Directory steps,HySecure,127.0.0.1
+2026-01-14 12:41:04,What is HyWorks?,HyWorks,127.0.0.1
+
+2026-01-14 13:01:46,What is HyWorks?,HyWorks,127.0.0.1
+2026-01-14 13:07:00,What is HyWorks?,HyWorks,127.0.0.1
+2026-01-14 13:11:14,What is HyWorks?,HyWorks,127.0.0.1
+2026-01-14 15:37:20,what is HyWorks?,HyWorks,127.0.0.1

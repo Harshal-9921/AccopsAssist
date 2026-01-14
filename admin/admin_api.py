@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import FileResponse
 
 from admin.auth import verify_admin
-from analytics.reader import usage_summary, top_questions
+from analytics.reader import usage_summary, top_questions, recent_logs
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -13,6 +13,10 @@ def get_usage_summary(admin=Depends(verify_admin)):
 @router.get("/top-questions")
 def get_top_questions(admin=Depends(verify_admin)):
     return {"top_questions": top_questions()}
+
+@router.get("/recent-logs")
+def get_recent_logs(limit: int = 10, admin=Depends(verify_admin)):
+    return {"recent_logs": recent_logs(limit)}
 
 @router.get("/download-csv")
 def download_csv(admin=Depends(verify_admin)):

@@ -6,8 +6,8 @@ DATA_DIR = "data"
 CSV_FILE = os.path.join(DATA_DIR, "usage_logs.csv")
 
 HEADERS = [
-    "timestamp",
-    "question",
+    "Date and Time",
+    "User Query",
     "product",
     "ip_address"
 ]
