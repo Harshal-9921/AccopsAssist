@@ -2,6 +2,7 @@ import os
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_openai import ChatOpenAI
+from backend.product_definitions import PRODUCT_DEFINITIONS
 
 
 # ======================================================
@@ -84,6 +85,23 @@ def get_rag_answer(question: str) -> str:
     - gpt-4o-mini for final answer
     """
 
+    # 0️⃣ Check if question is a basic "what is" product question
+    question_lower = question.lower()
+    is_basic_product_q = any(
+        f"what is {product}" in question_lower or f"what's {product}" in question_lower
+        for product in PRODUCT_DEFINITIONS.keys()
+    )
+    
+    if is_basic_product_q:
+        for product_key, product_info in PRODUCT_DEFINITIONS.items():
+            if product_key in question_lower:
+                return (
+                    f"**{product_key.upper()}**\n\n"
+                    f"{product_info['answer']}\n\n"
+                    f"🔗 **Source:**\n"
+                    f"- {product_info['source']}"
+                )
+
     # 1️⃣ Retrieve relevant chunks (load DB lazily)
     db = get_db()
     docs = db.similarity_search(question, k=4)
@@ -101,18 +119,22 @@ def get_rag_answer(question: str) -> str:
         if doc.metadata.get("source")
     }
 
-    # 4️⃣ Strict, low-token prompt
+    # 4️⃣ Better-formatted prompt to improve output quality
     prompt = f"""
-You are an Accops documentation assistant.
+You are an Accops documentation assistant. Answer the user's question clearly and concisely.
 
 Rules:
 - Use ONLY the documentation content below
 - Do NOT repeat the user's question
-- Be concise and factual
+- Format the answer clearly with proper line breaks
+- Use **bold** for important terms
 - If the answer is not present, say so clearly
+- Keep the answer under 200 words
 
 Documentation:
 {context}
+
+User Question: {question}
 
 Answer:
 """
@@ -122,10 +144,10 @@ Answer:
     response = llm.invoke(prompt)
     answer = response.content.strip()
 
-    # 6️⃣ Append sources
+    # 6️⃣ Append sources nicely
     if sources:
-        answer += "\n\n🔗 **Source:**\n"
-        for src in sources:
+        answer += "\n\n🔗 **Source(s):**\n"
+        for src in sorted(sources):
             answer += f"- {src}\n"
 
     return answer

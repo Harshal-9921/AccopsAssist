@@ -316,8 +316,9 @@
                 // 4. Hide Typing Indicator & Add AI Response
                 typingIndicator.style.display = "none";
 
-                // Use 'marked.parse' if available, otherwise raw text
-                const formattedAnswer = typeof marked !== 'undefined' ? marked.parse(data.answer) : data.answer;
+                // Use 'marked.parse' if available for markdown rendering, otherwise raw text
+                const rawAnswer = data.answer;
+                const formattedAnswer = typeof marked !== 'undefined' ? marked.parse(rawAnswer) : rawAnswer;
                 addMessage(formattedAnswer, "ai", true); // true = allow HTML (for bold/lists)
 
             } catch (error) {
