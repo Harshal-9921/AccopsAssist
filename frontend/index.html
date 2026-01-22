@@ -225,6 +225,41 @@
         .send-btn:hover {
             background: #ff6e42;
         }
+
+        /* Feedback Buttons */
+        .feedback-container {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .feedback-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            opacity: 0.6;
+        }
+
+        .feedback-btn:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        .feedback-btn.selected {
+            opacity: 1;
+            background: #f0f0f0;
+        }
+
+        .feedback-text {
+            font-size: 11px;
+            color: #888;
+            margin-left: 4px;
+        }
     </style>
 </head>
 
@@ -319,7 +354,8 @@
                 // Use 'marked.parse' if available for markdown rendering, otherwise raw text
                 const rawAnswer = data.answer;
                 const formattedAnswer = typeof marked !== 'undefined' ? marked.parse(rawAnswer) : rawAnswer;
-                addMessage(formattedAnswer, "ai", true); // true = allow HTML (for bold/lists)
+                const responseId = data.response_id;
+                addMessage(formattedAnswer, "ai", true, responseId); // true = allow HTML (for bold/lists)
 
             } catch (error) {
                 typingIndicator.style.display = "none";
@@ -328,7 +364,7 @@
             }
         }
 
-        function addMessage(text, sender, isHTML = false) {
+        function addMessage(text, sender, isHTML = false, responseId = null) {
             const messagesList = document.getElementById("messagesList");
             const typingIndicator = document.getElementById("typingIndicator");
 
@@ -338,9 +374,48 @@
             if (isHTML) div.innerHTML = text; // Be careful with XSS in production!
             else div.textContent = text;
 
+            // Add feedback buttons for AI messages
+            if (sender === "ai" && responseId) {
+                const feedbackDiv = document.createElement("div");
+                feedbackDiv.className = "feedback-container";
+                feedbackDiv.innerHTML = `
+                    <button class="feedback-btn" onclick="sendFeedback('${responseId}', 'positive', this)" title="Helpful">👍</button>
+                    <button class="feedback-btn" onclick="sendFeedback('${responseId}', 'negative', this)" title="Not helpful">👎</button>
+                    <span class="feedback-text"></span>
+                `;
+                div.appendChild(feedbackDiv);
+            }
+
             // Insert before the typing indicator so typing stays at bottom
             messagesList.insertBefore(div, typingIndicator);
             messagesList.scrollTop = messagesList.scrollHeight;
+        }
+
+        async function sendFeedback(responseId, feedback, button) {
+            try {
+                const res = await fetch("http://localhost:8000/feedback", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ response_id: responseId, feedback: feedback })
+                });
+
+                if (res.ok) {
+                    // Mark button as selected and disable all buttons in this feedback container
+                    const container = button.parentElement;
+                    const buttons = container.querySelectorAll('.feedback-btn');
+                    buttons.forEach(btn => {
+                        btn.disabled = true;
+                        btn.style.cursor = 'default';
+                    });
+                    button.classList.add('selected');
+                    
+                    // Show thank you message
+                    const feedbackText = container.querySelector('.feedback-text');
+                    feedbackText.textContent = 'Thank you for your feedback!';
+                }
+            } catch (error) {
+                console.error("Error sending feedback:", error);
+            }
         }
     </script>
 </body>

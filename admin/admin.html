@@ -211,6 +211,28 @@
             border-bottom: 1px solid var(--border);
             font-weight: bold;
             font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .btn-refresh {
+            background: #e9ecf3;
+            color: #333;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-refresh:hover {
+            background: #dbe2ef;
         }
 
         table {
@@ -309,7 +331,9 @@
         </div>
 
         <div class="table-container">
-            <div class="table-header">Recent Queries</div>
+            <div class="table-header">Recent Queries
+                <button class="btn-refresh" onclick="fetchDashboardData()">⟳ Refresh</button>
+            </div>
             <table>
                 <thead>
                     <tr>
@@ -399,6 +423,14 @@
                 logsData.recent_logs.forEach(item => {
                     const badgeClass =
                         item.product === "HyWorks" ? "badge-hyworks" : "badge-hysecure";
+                    
+                    // Display feedback emoji or dash
+                    let feedbackDisplay = '-';
+                    if (item.feedback === 'positive') {
+                        feedbackDisplay = '👍';
+                    } else if (item.feedback === 'negative') {
+                        feedbackDisplay = '👎';
+                    }
 
                     tbody.innerHTML += `
         <tr>
@@ -406,7 +438,7 @@
           <td>${item.question}</td>
           <td><span class="badge ${badgeClass}">${item.product}</span></td>
           <td>${item.ip || '-'}</td>
-          <td>👍 👎</td>
+          <td>${feedbackDisplay}</td>
         </tr>
       `;
                 });

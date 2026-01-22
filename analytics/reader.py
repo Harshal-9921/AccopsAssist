@@ -81,8 +81,8 @@ def top_questions(limit=5):
 
 def recent_logs(limit=10):
     """Return the most recent `limit` rows from the CSV as a list of dicts:
-    [{"datetime": str, "question": str, "product": str, "ip": str}, ...]
-    This supports multiple possible CSV header names (e.g. "Date and Time", "User Query", "Product", "IP Address").
+    [{"datetime": str, "question": str, "product": str, "ip": str, "feedback": str}, ...]
+    This supports multiple possible CSV header names (e.g. "Date and Time", "User Query", "Product", "IP Address", "feedback").
     """
     if not os.path.exists(CSV_FILE):
         return []
@@ -94,9 +94,13 @@ def recent_logs(limit=10):
             dt = (row.get("Date and Time") or row.get("date and time") or row.get("Date") or row.get("datetime") or row.get("DateTime") or "")
             q = (row.get("User Query") or row.get("User query") or row.get("question") or row.get("UserQuery") or "")
             product = row.get("Product") or row.get("product") or "Unknown"
-            ip = (row.get("IP Address") or row.get("ip") or row.get("IP") or "")
+            ip = (row.get("IP Address") or row.get("ip") or row.get("IP") or row.get("ip_address") or "")
+            feedback = row.get("feedback") or row.get("Feedback") or row.get("👍👎") or ""
+            rows.append({"datetime": dt, "question": q, "product": product, "ip": ip, "feedback": feedback})
 
-            rows.append({"datetime": dt, "question": q, "product": product, "ip": ip})
+    # Return the latest `limit` rows, preserving order newest->oldest
+    latest = rows[-limit:][::-1] if limit and len(rows) > limit else rows[::-1]
+    return latest
 
     # Return newest first
     return list(reversed(rows[-limit:]))
