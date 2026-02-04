@@ -156,6 +156,14 @@
             padding: 10px 14px;
             border-radius: 12px;
             margin-bottom: 10px;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .typing-text {
+            font-size: 13px;
+            color: #666;
+            font-weight: 500;
         }
 
         .typing-dot {
@@ -168,11 +176,11 @@
             animation: bounce 1.4s infinite ease-in-out both;
         }
 
-        .typing-dot:nth-child(1) {
+        .typing-dot:nth-child(2) {
             animation-delay: -0.32s;
         }
 
-        .typing-dot:nth-child(2) {
+        .typing-dot:nth-child(3) {
             animation-delay: -0.16s;
         }
 
@@ -282,6 +290,7 @@
             </div>
 
             <div class="typing-indicator" id="typingIndicator">
+                <span class="typing-text">🤔 Thinking</span>
                 <span class="typing-dot"></span>
                 <span class="typing-dot"></span>
                 <span class="typing-dot"></span>
@@ -326,8 +335,10 @@
             input.value = ""; // Clear input
 
             // 2. Show Typing Indicator
-            typingIndicator.style.display = "block";
-            messagesList.scrollTop = messagesList.scrollHeight; // Scroll to bottom
+            typingIndicator.style.display = "flex";
+            messagesList.scrollTop = messagesList.scrollHeight;
+            
+            // Scroll to bottom
 
             try {
                 // 3. Call Backend API (Matches your Guide Step 2)
@@ -388,7 +399,13 @@
 
             // Insert before the typing indicator so typing stays at bottom
             messagesList.insertBefore(div, typingIndicator);
-            messagesList.scrollTop = messagesList.scrollHeight;
+            
+            // Scroll to show start of new message (not bottom with sources)
+            if (sender === "ai") {
+                div.scrollIntoView({ behavior: "smooth", block: "start" });
+            } else {
+                messagesList.scrollTop = messagesList.scrollHeight;
+            }
         }
 
         async function sendFeedback(responseId, feedback, button) {
@@ -408,7 +425,7 @@
                         btn.style.cursor = 'default';
                     });
                     button.classList.add('selected');
-                    
+
                     // Show thank you message
                     const feedbackText = container.querySelector('.feedback-text');
                     feedbackText.textContent = 'Thank you for your feedback!';

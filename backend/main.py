@@ -21,23 +21,29 @@ class Question(BaseModel):
 
 class Feedback(BaseModel):
     response_id: str
-    feedback: str  # "positive" or "negative"
+    feedback: str  
 
 @app.post("/ask")
 def ask_question(q: Question, request: Request):
-    answer = get_rag_answer(q.question)
+    answer, resolved_product, confidence_score = get_rag_answer(q.question)
 
-    # 🔹 Detect product (simple logic)
-    product = "HyWorks" if "hyworks" in q.question.lower() else "HySecure"
+    #Detect product
+    q_lower = q.question.lower()
+    if "hyworks" in q_lower:
+        product = "HyWorks"
+    elif "hysecure" in q_lower:
+        product = "HySecure"
+    else:
+        product = resolved_product.capitalize() if resolved_product else "Unknown"
 
-    # 🔹 Get user IP
     ip = request.client.host
 
-    # 🔹 LOG TO CSV and get response_id
+    #LOG TO CSV and get response_id
     response_id = log_usage(
         question=q.question,
         product=product,
-        ip=ip
+        ip=ip,
+        confidence_score=confidence_score
     )
 
     return {"answer": answer, "response_id": response_id}

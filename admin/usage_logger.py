@@ -12,7 +12,8 @@ HEADERS = [
     "Product",
     "IP Address",
     "feedback",
-    "response_id"
+    "response_id",
+    "confidence_score"
 ]
 
 
@@ -46,7 +47,8 @@ def ensure_schema():
             row.get("Product") or row.get("product") or "Unknown",
             row.get("IP Address") or row.get("ip") or row.get("ip_address") or "",
             row.get("feedback") or row.get("👍👎") or "",
-            row.get("response_id") or ""
+            row.get("response_id") or "",
+            row.get("confidence_score") or ""
         ])
 
     with open(CSV_FILE, mode="w", newline="", encoding="utf-8") as f:
@@ -55,7 +57,7 @@ def ensure_schema():
         writer.writerows(normalized)
 
 
-def log_usage(question: str, product: str, ip: str):
+def log_usage(question: str, product: str, ip: str, confidence_score: float = 0.0):
     ensure_schema()
 
     # Generate unique response ID
@@ -69,7 +71,8 @@ def log_usage(question: str, product: str, ip: str):
             product,
             ip,
             "",  # feedback (empty initially)
-            response_id
+            response_id,
+            confidence_score
         ])
 
     return response_id

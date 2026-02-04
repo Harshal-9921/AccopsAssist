@@ -4,31 +4,26 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 
 
-# ======================================================
-# CONFIGURATION
-# ======================================================
+#CONFIGURATION
 
 SEED_URLS = [
-    "https://docs.accops.com/HyWorks34sp2/index.html",
+    "https://docs.accops.com/HyWorks36/index.html",
     "https://docs.accops.com/hysecure_7_2/index.html"
 ]
 
 BASE_DOMAIN = "docs.accops.com"
 OUTPUT_DIR = "vector_store/accops_docs"
 
-CHUNK_SIZE = 500
-CHUNK_OVERLAP = 50
+CHUNK_SIZE = 1200
+CHUNK_OVERLAP = 150
 
 
-# ======================================================
-# HELPERS
-# ======================================================
-
+#HELPERS
 def is_valid_doc_link(url: str) -> bool:
     """
     Allow only Accops HTML documentation pages.
@@ -75,13 +70,9 @@ def scrape_page(url: str) -> str:
     text = soup.get_text(separator=" ")
     return " ".join(text.split())
 
-
-# ======================================================
 # MAIN INGESTION PIPELINE
-# ======================================================
-
 def main():
-    # 1️⃣ Discover all documentation pages
+    #Discover all documentation pages
     all_urls = set()
 
     for seed in SEED_URLS:
@@ -90,7 +81,7 @@ def main():
 
     print(f"\n✅ Discovered {len(all_urls)} documentation pages\n")
 
-    # 2️⃣ Scrape + chunk pages with metadata
+    #Scrape + chunk pages with metadata
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=CHUNK_SIZE,
         chunk_overlap=CHUNK_OVERLAP
@@ -118,12 +109,12 @@ def main():
 
     print(f"\n✅ Created {len(documents)} document chunks\n")
 
-    # 3️⃣ Create embeddings (LOCAL, NO API COST)
+    # Create embeddings (LOCAL, NO API COST)
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
 
-    # 4️⃣ Build FAISS vector database
+    # Build FAISS vector database
     db = FAISS.from_documents(documents, embeddings)
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)

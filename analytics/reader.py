@@ -5,14 +5,19 @@ from collections import Counter
 CSV_FILE = "data/usage_logs.csv"
 
 
+def normalize_product(product: str) -> str:
+    
+    if not product:
+        return "Unknown"
+    product_lower = product.lower()
+    if "hyworks" in product_lower:
+        return "HyWorks"
+    elif "hysecure" in product_lower:
+        return "HySecure"
+    return product
+
+
 def usage_summary():
-    """Return usage summary in the shape expected by the admin UI:
-    {
-        "total_queries": int,
-        "by_product": { "HyWorks": int, "HySecure": int }
-    }
-    This function is tolerant to different CSV header names.
-    """
     if not os.path.exists(CSV_FILE):
         return {
             "total_queries": 0,
@@ -29,6 +34,7 @@ def usage_summary():
             total += 1
             # support multiple possible header names for product
             product = row.get("product") or row.get("Product") or row.get("product_name") or "Unknown"
+            product = normalize_product(product)
             products[product] += 1
 
     return {
@@ -41,16 +47,11 @@ def usage_summary():
 
 
 def top_questions(limit=5):
-    """Return list of top questions as list of dicts:
-    [{"question": str, "product": str, "count": int}, ...]
-    The function is tolerant to different CSV header names.
-    """
+
     if not os.path.exists(CSV_FILE):
         return []
 
-    # question -> count
     q_counter = Counter()
-    # question -> Counter(products)
     q_products = {}
 
     with open(CSV_FILE, newline="", encoding="utf-8") as f:
@@ -80,10 +81,7 @@ def top_questions(limit=5):
 
 
 def recent_logs(limit=10):
-    """Return the most recent `limit` rows from the CSV as a list of dicts:
-    [{"datetime": str, "question": str, "product": str, "ip": str, "feedback": str}, ...]
-    This supports multiple possible CSV header names (e.g. "Date and Time", "User Query", "Product", "IP Address", "feedback").
-    """
+
     if not os.path.exists(CSV_FILE):
         return []
 
@@ -94,13 +92,13 @@ def recent_logs(limit=10):
             dt = (row.get("Date and Time") or row.get("date and time") or row.get("Date") or row.get("datetime") or row.get("DateTime") or "")
             q = (row.get("User Query") or row.get("User query") or row.get("question") or row.get("UserQuery") or "")
             product = row.get("Product") or row.get("product") or "Unknown"
+            product = normalize_product(product)
             ip = (row.get("IP Address") or row.get("ip") or row.get("IP") or row.get("ip_address") or "")
             feedback = row.get("feedback") or row.get("Feedback") or row.get("👍👎") or ""
-            rows.append({"datetime": dt, "question": q, "product": product, "ip": ip, "feedback": feedback})
+            confidence_score_str = row.get("confidence_score") or row.get("Confidence Score") or ""
+            confidence_score = float(confidence_score_str) if confidence_score_str else 0.0
+            rows.append({"datetime": dt, "question": q, "product": product, "ip": ip, "feedback": feedback, "confidence_score": confidence_score})
 
     # Return the latest `limit` rows, preserving order newest->oldest
     latest = rows[-limit:][::-1] if limit and len(rows) > limit else rows[::-1]
     return latest
-
-    # Return newest first
-    return list(reversed(rows[-limit:]))

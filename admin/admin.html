@@ -268,7 +268,7 @@
 
         .badge-hyworks {
             background: #e3f2fd;
-            color: #ff6e42;
+            color: #1976d2;
         }
 
         .badge-hysecure {
@@ -294,9 +294,6 @@
         <div class="logo">Accops Admin</div>
         <nav>
             <a href="#" class="active">Dashboard</a>
-            <a href="#">Analytics</a>
-            <a href="#">Help</a>
-            <a href="#">Settings</a>
         </nav>
         <div class="logout">
             <a onclick="location.reload()">Logout</a>
@@ -341,7 +338,8 @@
                         <th>User Query</th>
                         <th>Product</th>
                         <th>IP Address</th>
-                        <th>👍👎</th>
+                        <th>Confidence</th>
+                        <th>Feedback</th>
                     </tr>
                 </thead>
                 <tbody id="logs-body">
@@ -386,7 +384,7 @@
         // --- DASHBOARD LOGIC ---
         async function fetchDashboardData() {
             try {
-                // 1️⃣ Fetch usage summary
+                // Fetch usage summary
                 const summaryRes = await fetch(`${API_BASE}/admin/usage-summary`, {
                     headers: {
                         "Authorization": `Bearer ${ADMIN_TOKEN}`
@@ -407,7 +405,7 @@
                 document.getElementById("stat-hysecure").innerText =
                     summary.by_product?.HySecure || 0;
 
-                // 2️⃣ Fetch recent logs (latest entries from CSV)
+                // Fetch recent logs (latest entries from CSV)
                 const logsRes = await fetch(`${API_BASE}/admin/recent-logs`, {
                     headers: {
                         "Authorization": `Bearer ${ADMIN_TOKEN}`
@@ -425,12 +423,16 @@
                         item.product === "HyWorks" ? "badge-hyworks" : "badge-hysecure";
                     
                     // Display feedback emoji or dash
-                    let feedbackDisplay = '-';
+                    let feedbackDisplay = 'No Feedback yet';
                     if (item.feedback === 'positive') {
-                        feedbackDisplay = '👍';
+                        feedbackDisplay = '👍Helpful';
                     } else if (item.feedback === 'negative') {
-                        feedbackDisplay = '👎';
+                        feedbackDisplay = '👎Not Helpful';
                     }
+
+                    // Display confidence score as percentage
+                    let confidenceDisplay = item.confidence_score ? 
+                        (parseFloat(item.confidence_score) * 100).toFixed(0) + '%' : '-';
 
                     tbody.innerHTML += `
         <tr>
@@ -438,6 +440,7 @@
           <td>${item.question}</td>
           <td><span class="badge ${badgeClass}">${item.product}</span></td>
           <td>${item.ip || '-'}</td>
+          <td>${confidenceDisplay}</td>
           <td>${feedbackDisplay}</td>
         </tr>
       `;

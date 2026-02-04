@@ -1,35 +1,79 @@
-Date and Time,User Query,Product,IP Address,feedback,response_id
-2025-12-31 13:31:18,what is Hyworks?,HyWorks,127.0.0.1,,
-2025-12-31 22:22:51,what is HyWorks,HyWorks,127.0.0.1,,
-2025-12-31 22:26:36,What are Accops products?,HySecure,127.0.0.1,,
-2025-12-31 22:26:55,What are the port requirements for HyWorks?,HyWorks,127.0.0.1,,
-2025-12-31 22:27:49,What are the port requirements for HyWorks?,HyWorks,127.0.0.1,,
-2025-12-31 22:28:11,How to configure Web VPN in HySecure?,HySecure,127.0.0.1,,
-2026-01-01 13:38:24,how CSV Download works,HySecure,127.0.0.1,,
-2026-01-10 14:38:11,What is HySecure?,HySecure,127.0.0.1,,
-2026-01-11 22:21:34,Integration with Active Directory steps,HySecure,127.0.0.1,,
-2026-01-12 15:11:44,What ports are required for HyWorks?,HyWorks,127.0.0.1,,
-2026-01-12 15:12:48,what is HyWorks,HyWorks,127.0.0.1,,
-2026-01-13 11:10:46,how Hyper-V connector is installed on Microsoft Hyper-V,HySecure,127.0.0.1,,
-2026-01-13 16:07:28,installing Hysecure in single node?,HySecure,127.0.0.1,,
-2026-01-13 16:10:48,this is not the currect answer,HySecure,127.0.0.1,,
-2026-01-13 16:11:23,i am looking for HySecure,HySecure,127.0.0.1,,
-2026-01-13 18:38:30,what is HySecure,HySecure,127.0.0.1,,
-2026-01-13 18:46:17,what is HyWorks?,HyWorks,127.0.0.1,,
-2026-01-13 18:47:48,what is HyWorks?,HyWorks,127.0.0.1,,
-2026-01-13 18:51:57,Integration with Active Directory steps,HySecure,127.0.0.1,,
-2026-01-14 10:17:41,what is HySecure,HySecure,127.0.0.1,,
-2026-01-14 12:41:04,What is HyWorks?,HyWorks,127.0.0.1,,
-2026-01-16 13:29:46,Integration with Active Directory steps,HySecure,127.0.0.1,,
-2026-01-16 13:33:58,what is HySecure?,HySecure,127.0.0.1,,
-2026-01-16 13:52:34,installing Hysecure in single node?,HySecure,127.0.0.1,,
-2026-01-16 13:52:54,this is not the currect answer,HySecure,127.0.0.1,,
-2026-01-16 13:58:24,How to install HySecure?,HySecure,127.0.0.1,,
-2026-01-21 14:48:15,what is HyWorks,HyWorks,127.0.0.1,positive,
-2026-01-21 14:48:57,installing Hysecure in single node?,HySecure,127.0.0.1,positive,
-2026-01-21 14:54:34,what is HyWorks,HyWorks,127.0.0.1,negative,
-2026-01-21 15:02:16,what is HyWorks,HyWorks,127.0.0.1,negative,2026012115021617d0ad
-2026-01-21 15:03:15,what is HyWorks,HyWorks,127.0.0.1,positive,2026012115031520332a
-2026-01-21 15:08:04,Integration with Active Directory steps,HySecure,127.0.0.1,,202601211508047f5129
-2026-01-22 12:09:06,what is HyWorks?,HyWorks,127.0.0.1,positive,202601221209066f9325
-2026-01-22 12:10:26,installing Hysecure in single node?,HySecure,127.0.0.1,negative,202601221210263916fe
+Date and Time,User Query,Product,IP Address,feedback,response_id,confidence_score
+2026-01-23 13:55:10,what is HyWorks?,HyWorks,127.0.0.1,positive,202601231355101dc87d,
+2026-01-23 14:03:52,installing Hysecure in single node?,HySecure,127.0.0.1,positive,20260123140352165337,
+2026-01-23 14:51:36,Integration with Active Directory steps,HySecure,127.0.0.1,,20260123145136d15c02,
+2026-01-25 12:25:02,what is HyWorks?,HyWorks,127.0.0.1,,20260125122502d4c09b,
+2026-01-25 12:29:12,what is HySecure Management Roles and Privileges?,HySecure,127.0.0.1,,202601251229128f0482,
+2026-01-25 13:30:06,HySecure Management Roles and Privileges,HySecure,127.0.0.1,positive,2026012513300691f129,
+2026-01-25 13:32:30,Integration with Active Directory steps,HySecure,127.0.0.1,positive,20260125133230eb75e6,
+2026-01-25 13:51:31,Hyper-V Connector Prerequisites,HySecure,127.0.0.1,positive,20260125135131bfa440,
+2026-01-25 14:02:59,Hyper-V Connector Prerequisites,HySecure,127.0.0.1,positive,202601251402591b5612,
+2026-01-25 14:04:24,Hyper-V Connector Prerequisites,HySecure,127.0.0.1,positive,20260125140424b57ab2,
+2026-01-25 14:38:20,What is HySecure?,HySecure,127.0.0.1,positive,202601251438201dda3d,
+2026-01-25 14:39:50,What is HyWorks?,HyWorks,127.0.0.1,positive,20260125143950f3531d,
+2026-01-25 14:54:36,What is HySecure?,HySecure,127.0.0.1,positive,202601251454365d5978,
+2026-01-25 15:01:58,What is HyWorks?,HyWorks,127.0.0.1,,2026012515015838e48c,
+2026-01-25 15:09:08,What is HySecure?,HySecure,127.0.0.1,positive,202601251509089b1807,
+2026-01-25 15:11:33,HySecure Management Roles and Privileges,HySecure,127.0.0.1,negative,202601251511337143f4,
+2026-01-25 15:20:29,What version are you using?,HySecure,127.0.0.1,,202601251520297dd6a4,
+2026-01-25 15:21:18,how are you?,HySecure,127.0.0.1,,202601251521186dc5fc,
+2026-01-25 15:22:51,What version are you using?,HySecure,127.0.0.1,positive,202601251522511b6534,
+2026-01-25 15:23:04,What is HySecure?,HySecure,127.0.0.1,negative,20260125152304953e85,
+2026-01-25 15:51:09,What version are you using?,HySecure,127.0.0.1,,20260125155109a83c14,
+2026-01-25 15:59:39,What is HySecure?,HySecure,127.0.0.1,positive,202601251559395b4fad,
+2026-01-25 16:00:01,HySecure Management Roles and Privileges,HySecure,127.0.0.1,negative,20260125160001d2e88f,
+2026-01-25 16:23:43,HySecure Management Roles and Privileges,HySecure,127.0.0.1,positive,20260125162343e4d4d4,
+2026-01-25 16:28:57,What is HyWorks?,HyWorks,127.0.0.1,positive,20260125162857fe5622,
+2026-01-25 16:31:27,I need a bit more information.,HySecure,127.0.0.1,positive,20260125163127e33808,
+2026-01-26 12:45:18,what is HyWorks?,HyWorks,127.0.0.1,positive,20260126124518d67bdf,
+2026-01-26 17:12:28,How To Change IP Address of Controller,HySecure,127.0.0.1,positive,20260126171228004de0,
+2026-01-26 17:14:28,i want in japanese language,HySecure,127.0.0.1,,202601261714286a5b84,
+2026-01-26 17:15:07,How To Change IP Address of Controller in japanese language,HySecure,127.0.0.1,positive,20260126171507ff2235,
+2026-01-27 13:00:13,How To Connect To Hypervisor Console,Unknown,127.0.0.1,positive,20260127130013b375c7,
+2026-01-27 13:06:12,Product,Hysecure,127.0.0.1,positive,202601271306126e7abe,
+2026-01-27 13:06:59,How To Change IP Address of Controller,Hyworks,127.0.0.1,positive,20260127130659ed34ff,
+2026-01-27 13:07:38,How To Connect To Hypervisor Console,Hyworks,127.0.0.1,positive,2026012713073876d6a2,
+2026-01-27 13:08:05,Resolve Issue of Black Patches in Windows Desktop Session,Hyworks,127.0.0.1,positive,20260127130805376c75,
+2026-01-27 13:08:49,How to configure JumpCloud as an LDAP Authentication Server for HySecure Gateway,HySecure,127.0.0.1,,20260127130849f03a2d,
+2026-01-27 14:41:16,Resolve Issue of Black Patches in Windows Desktop Session,Hyworks,127.0.0.1,positive,202601271441168c72eb,
+2026-01-27 14:52:36,Resolve Issue of Black Patches in Windows Desktop Session,Hyworks,127.0.0.1,,2026012714523659a79f,0.9
+2026-01-27 14:59:59,How To Connect To Hypervisor Console,Hyworks,127.0.0.1,positive,2026012714595970e1a9,0.9
+2026-01-27 15:00:05,i want in japanese language,Hyworks,127.0.0.1,negative,202601271500050d024c,0.9
+2026-01-27 15:01:02,How To Connect To Hypervisor Console i want in japanese language,Hyworks,127.0.0.1,positive,202601271501020995cb,0.9
+2026-01-27 15:14:36,what is your name,Hyworks,127.0.0.1,,202601271514368235d5,0.9
+2026-01-27 15:18:26,Explain security setup,Hysecure,127.0.0.1,,2026012715182675c121,0.9
+2026-01-27 15:35:38,How to configure HySecure Web VPN?,HySecure,127.0.0.1,positive,202601271535384124ea,0.81
+2026-01-27 15:35:45,Explain security setup,Hysecure,127.0.0.1,,20260127153545fe63e3,0.52
+2026-01-27 15:37:52,Resolve Issue of Black Patches in Windows Desktop Session,Hyworks,127.0.0.1,positive,20260127153752a92ee1,0.72
+2026-01-27 15:39:25,What is HyWorks?,HyWorks,127.0.0.1,negative,2026012715392528215c,0.77
+2026-01-27 15:40:37,About Accops HyWorks,HyWorks,127.0.0.1,positive,20260127154037c5c5c6,0.84
+2026-01-27 15:42:09,Resolve Management Console accessibility Issue on Windows 2012,Hyworks,127.0.0.1,positive,20260127154209599970,0.65
+2026-01-27 15:47:38,Resolve Management Console accessibility Issue on Windows 2012,Hyworks,127.0.0.1,positive,20260127154738241c8e,0.65
+2026-01-27 15:49:25,About Accops HyWorks,HyWorks,127.0.0.1,,2026012715492509883b,0.84
+2026-01-27 15:54:22,what is your name,Hyworks,127.0.0.1,negative,20260127155422630b5d,0.23
+2026-01-27 16:19:13,How to Validate HySecure OS Package Vulnerabilities,HySecure,127.0.0.1,positive,20260127161913862b8b,0.94
+2026-01-27 18:17:05,How to Validate HySecure OS Package,HySecure,127.0.0.1,positive,20260127181705af6d94,0.86
+2026-01-28 12:32:25,How to configure HySecure Web VPN?,HySecure,127.0.0.1,negative,20260128123225f744c6,0.81
+2026-01-28 12:33:31,How to Validate HySecure OS Package Vulnerabilities,HySecure,127.0.0.1,positive,202601281233317b1ca2,0.94
+2026-01-28 17:03:06,Explain HyWorks,HyWorks,127.0.0.1,positive,202601281703061506be,0.71
+2026-01-28 17:05:22,How to Configure Controller Service to Use Specific IP Address,Hyworks,127.0.0.1,,20260128170522290082,0.7
+2026-01-28 17:15:44,hysecure single node deployment?,HySecure,127.0.0.1,,202601281715447d23da,0.88
+2026-01-28 17:17:14,what is VAPT,Hysecure,127.0.0.1,,2026012817171481d862,0.42
+2026-01-28 17:18:30,how to butable ISO,Hysecure,127.0.0.1,positive,202601281718303f990d,0.46
+2026-01-28 17:20:19,change the ip of hyworks,HyWorks,127.0.0.1,,2026012817201996bd25,0.9
+2026-01-28 17:22:16,performance qtweak in hyworks,HyWorks,127.0.0.1,,202601281722168128d4,0.64
+2026-01-28 17:24:07,Performance Tweaking Through Logging,Hyworks,127.0.0.1,,20260128172407e22c81,0.55
+2026-01-28 17:24:58,Black Patches in Windows Desktop,Hyworks,127.0.0.1,,20260128172458b7dcc8,0.6
+2026-01-28 17:27:31,Prepare SCVMM for installtion,Hyworks,127.0.0.1,,20260128172731ee8284,0.59
+2026-01-28 17:30:35,AWS 上の 2 ノード Hysecure インストール,HySecure,127.0.0.1,,20260128173035c6fcf2,0.56
+2026-01-28 17:32:29,HyWorksは単一組織および複数組織で機能します,HyWorks,127.0.0.1,,202601281732298fc35e,0.43
+2026-01-28 17:33:35,Linux での USB 制御,Hyworks,127.0.0.1,,20260128173335e3e9cf,0.35
+2026-01-30 11:46:35,what is azur multi nodee,Hysecure,127.0.0.1,positive,202601301146353c32de,0.4
+2026-01-30 11:48:59,configur external load balancer,Hysecure,127.0.0.1,,20260130114859990516,0.67
+2026-01-30 11:55:04,How To Reset HyWorks Super,HyWorks,127.0.0.1,,20260130115504536f6c,0.45
+2026-01-30 11:55:49,How To Reset HyWorks Super-Administrator Credentials,HyWorks,127.0.0.1,,20260130115549a58320,0.95
+2026-01-30 12:21:14,HySecure On-Premise Deployment,HySecure,127.0.0.1,,20260130122114a5e80d,0.84
+2026-02-03 14:39:41,How To Change IP Address of Controller,Hyworks,127.0.0.1,positive,2026020314394194dd5b,0.65
+2026-02-03 14:41:12,How To Change IP Address of Controller in HyWorks,HyWorks,127.0.0.1,,202602031441126389d9,0.95
+2026-02-04 11:07:31,Azure single node?,Hysecure,127.0.0.1,positive,2026020411073123bf27,0.62
+2026-02-04 11:10:07,how to install hylab,Hysecure,127.0.0.1,positive,2026020411100783b84a,0.65

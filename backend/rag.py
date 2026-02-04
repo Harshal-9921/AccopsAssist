@@ -4,24 +4,13 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_openai import ChatOpenAI
 from backend.product_definitions import PRODUCT_DEFINITIONS
 
-
-# ======================================================
-# CONFIG / LAZY INITIALIZATION
-# ======================================================
-
 VECTOR_DB_PATH = "vector_store/accops_docs"
 
-# Internal caches (initialized on first use to avoid import-time downloads)
 _embeddings = None
 _db = None
 
 
 def get_embeddings():
-    """Lazily initialize and return HuggingFace embeddings.
-
-    This avoids trying to download the model during module import (which
-    causes the server to fail to start in offline/DNS-failure environments).
-    """
     global _embeddings
     if _embeddings is None:
         try:
@@ -38,12 +27,9 @@ def get_embeddings():
             ) from e
     return _embeddings
 
-# ======================================================
-# LOAD VECTOR DATABASE
-# ======================================================
 
+# LOAD VECTOR DATABASE
 def get_db():
-    """Lazily load and return the FAISS vector DB (caches result)."""
     global _db
     if _db is None:
         if not os.path.exists(VECTOR_DB_PATH):
@@ -58,74 +44,75 @@ def get_db():
         )
     return _db
 
-# ======================================================
-# LAZY LLM INITIALIZATION (RESPONSIBLE USE)
-# ======================================================
-
+# LLM INITIALIZATION 
 def get_llm():
-    """
-    Lazily initialize the LLM to:
-    - avoid startup crashes
-    - minimize API usage
-    """
     return ChatOpenAI(
-        model="gpt-4o-mini",   # ✅ REQUIRED BY TEAM LEAD
+        model="gpt-4o-mini", 
         temperature=0,
-        max_tokens=300         # ✅ COST CONTROL
+        max_tokens=300      
     )
 
-# ======================================================
 # CORE RAG FUNCTION
-# ======================================================
-
-def get_rag_answer(question: str) -> str:
-    """
-    RAG-based answer using:
-    - FAISS retrieval
-    - gpt-4o-mini for final answer
-    """
-
-    # 0️⃣ Check if question is a basic "what is" product question
-    question_lower = question.lower()
-    is_basic_product_q = any(
-        f"what is {product}" in question_lower or f"what's {product}" in question_lower
-        for product in PRODUCT_DEFINITIONS.keys()
-    )
+def get_rag_answer(question: str):
     
-    if is_basic_product_q:
-        for product_key, product_info in PRODUCT_DEFINITIONS.items():
-            if product_key in question_lower:
-                return (
-                    f"**{product_key.upper()}**\n\n"
-                    f"{product_info['answer']}\n\n"
-                    f"🔗 **Source:**\n"
-                    f"- {product_info['source']}"
-                )
-
-    # 1️⃣ Retrieve relevant chunks (load DB lazily)
+    question_lower = question.lower()
+    target_product = None
+    
+    for product_key in PRODUCT_DEFINITIONS.keys():
+        if product_key in question_lower:
+            target_product = product_key
+            break
+    
     db = get_db()
-    docs = db.similarity_search(question, k=4)
+    
+    # Get more results initially to filter by product (with scores)
+    all_docs_with_scores = db.similarity_search_with_score(question, k=8)
+    
+    if target_product:
+        filtered_docs_with_scores = [
+            (doc, score) for doc, score in all_docs_with_scores
+            if doc.metadata.get("module", "").lower() == target_product.lower()
+        ]
+        # Fall back to unfiltered if no product-specific docs found
+        docs_with_scores = filtered_docs_with_scores if filtered_docs_with_scores else all_docs_with_scores[:4]
+    else:
+        docs_with_scores = all_docs_with_scores[:4]
 
-    if not docs:
-        return "Sorry, I couldn’t find relevant information in the Accops documentation."
+    if not docs_with_scores:
+        return "Sorry, I couldn't find relevant information in the Accops documentation.", resolved_product or "unknown", 0.2
 
-    # 2️⃣ Build compact context (limit size = responsible use)
+    # Extract docs from tuples for context building
+    docs = [doc for doc, score in docs_with_scores]
+    scores = [score for doc, score in docs_with_scores]
+
     context = "\n\n".join(doc.page_content[:800] for doc in docs)
 
-    # 3️⃣ Collect unique sources
-    sources = {
-        doc.metadata.get("source")
-        for doc in docs
-        if doc.metadata.get("source")
-    }
+    # Collect TOP 1-2 most relevant sources
+    sources = []
+    for doc in docs[:2]: 
+        source = doc.metadata.get("source")
+        if source and source not in sources:
+            sources.append(source)
 
-    # 4️⃣ Better-formatted prompt to improve output quality
+    resolved_product = target_product
+    if not resolved_product:
+        # Take module metadata from the top hit if available
+        top_module = docs[0].metadata.get("module") if docs else None
+        if top_module:
+            resolved_product = top_module.lower()
+
+    product_context = f"(Question is about: {target_product.upper()})" if target_product else ""
+    
     prompt = f"""
 You are an Accops documentation assistant. Answer the user's question clearly and concisely.
 
+{product_context}
+
 Rules:
 - Use ONLY the documentation content below
+- If the user asks in a specific language, respond in the SAME language. Otherwise, respond in English.
 - Do NOT repeat the user's question
+- If the question is about a specific product (HySecure or HyWorks), prioritize information from that product's documentation
 - Format the answer clearly with proper line breaks
 - Use **bold** for important terms
 - If the answer is not present, say so clearly
@@ -139,15 +126,35 @@ User Question: {question}
 Answer:
 """
 
-    # 5️⃣ Call LLM (responsibly)
+    # Call LLM (responsibly)
     llm = get_llm()
     response = llm.invoke(prompt)
     answer = response.content.strip()
 
-    # 6️⃣ Append sources nicely
+    #Append TOP sources (most relevant first)
     if sources:
         answer += "\n\n🔗 **Source(s):**\n"
-        for src in sorted(sources):
+        for src in sources:  # Already ordered by relevance
             answer += f"- {src}\n"
 
-    return answer
+    #Calculate confidence score based on retrieval quality
+    top_score = scores[0] if scores else 1.0
+    avg_score = sum(scores) / len(scores) if scores else 1.0
+    
+    # Convert FAISS distance to confidence:
+    confidence = max(0.2, min(0.95, 1.0 - (top_score * 0.5)))
+
+    answer_lower = answer.lower()
+    if any(phrase in answer_lower for phrase in 
+           ["couldn't find", "not found", "unclear", "unable to", "no information", "don't have", "not available"]):
+        confidence = max(0.2, confidence * 0.5)  # Halve confidence for uncertain answers
+    
+    # Boost confidence if there's a product match
+    if target_product:
+        # Check if we actually found product-specific docs
+        product_docs_count = sum(1 for doc, score in docs_with_scores 
+                                if doc.metadata.get("module", "").lower() == target_product.lower())
+        if product_docs_count > 0:
+            confidence = min(0.95, confidence + 0.15)
+    
+    return answer, resolved_product or "unknown", round(confidence, 2)
