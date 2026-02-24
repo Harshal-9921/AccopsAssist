@@ -370,7 +370,9 @@
 
             } catch (error) {
                 typingIndicator.style.display = "none";
-                addMessage("Error connecting to server. Is FastAPI running?", "ai");
+                // Show the actual error message (e.g. "NetworkError" or "Server responded with error")
+                // This helps differentiate between "backend down" vs "backend error"
+                addMessage(error.message || "Error connecting to server.", "ai");
                 console.error(error);
             }
         }
